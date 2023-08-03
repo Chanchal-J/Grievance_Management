@@ -26,17 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'complaint') {
     $state = $_POST['inputState'];
     $pincode = $_POST['inputPin'];
     $s_no = $_SESSION['s_no'];
-    $exists = false;
-    if ($exists == false) {
-        $sql = "INSERT INTO complaints (category , description , address , city , state , pincode , s_no ) VALUES('$category','$description','$address','$city','$state',$pincode,$s_no)";
-        $result = mysqli_query($conn, $sql);
-        if ($result) {
-            $showAlert = true;
-        }
-
+    $sql = "INSERT INTO complaints (category , description , address , city , state , pincode , s_no ) VALUES('$category','$description','$address','$city','$state',$pincode,$s_no)";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        $showAlert = true;
     } else {
         $showerror = "ERROR !!!";
     }
+
 }
 
 // To diplay appropriate alert messages
@@ -87,6 +84,7 @@ if ($showAlert) {
     $page = 'complaint';
 
     require('nav.php');
+    include 'common/dbconnect.php';
     ?>
 
     <!-- Form to recieve the details of the complaint -->
@@ -97,13 +95,14 @@ if ($showAlert) {
             <div class="col-12">
                 <label for="inputCategory" class="form-label">Category</label>
                 <select id="inputCategory" class="form-select" name="inputCategory">
-                    <option selected>Street light</option>
-                    <option>Road conditions</option>
-                    <option>Stray animals</option>
-                    <option>Electric supply</option>
-                    <option>Water supply</option>
-                    <option>Power line</option>
-                    <option>Other</option>
+                    <?php
+                    // Listing all the categories from the database.
+                    $sql1 = "SELECT * FROM category";
+                    $result1 = mysqli_query($conn, $sql1);
+                    while ($row1 = $result1->fetch_assoc()) {
+                        echo '<option>' . $row1['category'] . '</option>';
+                    }
+                    ?>
 
                 </select>
             </div>
