@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'admin') {
         $row = $result->fetch_assoc();
         $_SESSION['loggedin'] = true;
         $_SESSION['adminName'] = $adminName;
+        $_SESSION['adminID'] = $row['id'];
     } else {
         // In case of Invalid Credentials redirect to 'home' page.
         header("location:/project/index.php?adminAlert=true");
@@ -33,6 +34,18 @@ if (isset($_GET["page"])) {
 // Redirecting in that case to the users page in admin portal.
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUser') {
     $page = 'users';
+}
+
+// When the admin adds a new category, the form action using post method sends it to admin home page.
+// Redirecting in that case to the category page in admin portal.
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'addCategory') {
+    $page = 'category';
+}
+
+// When the admin adds a new admin, the form action using post method sends it to admin home page.
+// Redirecting in that case to the admin page in admin portal.
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'addAdmin') {
+    $page = 'admin';
 }
 
 ?>
@@ -81,6 +94,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                             echo 'active';
                         } ?>" href="/project/admin/admin.php?page=users">Users</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if ($page == 'category') {
+                            echo 'active';
+                        } ?>" href="/project/admin/admin.php?page=category">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if ($page == 'admin') {
+                            echo 'active';
+                        } ?>" href="/project/admin/admin.php?page=admin">Admin</a>
+                    </li>
                 </ul>
                 <form class="d-flex" role="search">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -105,6 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
         $category_query = '1';
         $city_query = '1';
         $resolution_query = '1';
+        $admin_query = '1';
 
         // Filters for Admin to view the complaints send using POST method from the form.
         // Adjusting the sql query accordingly.
@@ -115,9 +139,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
             if ($_POST['inputCity'] != "All") {
                 $city_query = 'city="' . $_POST['inputCity'] . '"';
             }
-
             if ($_POST['inputResoln'] != "All") {
                 $resolution_query = 'resolved=' . $_POST['inputResoln'];
+            }
+            if ($_POST['inputadminID'] != "All") {
+                $admin_query = 'resolved_by_admin_id=' . $_POST['inputadminID'];
             }
         }
 
@@ -125,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
         // Updates the database accordingly.
         if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'resolveComplaint') {
             $complaintID = $_POST['complaintID'];
-            $sql1 = "UPDATE complaints SET dt_resolve = CURRENT_TIME(), resolved=true WHERE id = " . $complaintID;
+            $sql1 = "UPDATE complaints SET dt_resolve = CURRENT_TIME(), resolved=true, resolved_by_admin_id=" . $_SESSION['adminID'] . " WHERE id = " . $complaintID;
             $result1 = mysqli_query($conn, $sql1);
         }
 
@@ -137,14 +163,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                     <div class="col-md-3">
                         <label for="inputCategory" class="form-label">Category</label>
                         <select id="inputCategory" name="inputCategory" class="form-select">
-                        <option selected>All</option>
-                        <option>Street light</option>
-                        <option>Road conditions</option>
-                        <option>Stray animals</option>
-                        <option>Electric supply</option>
-                        <option>Water supply</option>
-                        <option>Power line</option>
-                        <option>Other</option>
+                        <option selected>All</option>';
+
+        // Listing all the categories from the database.
+        $sql1 = "SELECT * FROM category";
+        $result1 = mysqli_query($conn, $sql1);
+        while ($row1 = $result1->fetch_assoc()) {
+            echo '<option>' . $row1['category'] . '</option>';
+        }
+
+        echo '
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -171,6 +199,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                         </select>
                     </div>
                     <div class="col-md-3">
+                        <label for="inputAdminName" class="form-label">Resolved By Admin</label>
+                        <select id="inputadminID" name="inputadminID" class="form-select">
+                        <option selected>All</option>';
+
+        // Listing all the admin_names from the database.
+        $sql1 = "SELECT * FROM admin";
+        $result1 = mysqli_query($conn, $sql1);
+        while ($row1 = $result1->fetch_assoc()) {
+            echo '<option value=' . $row1['id'] . '>' . $row1['admin_name'] . '</option>';
+        }
+
+        echo '
+                        </select>
+                    </div>
+                    <div class="col-md-1">
                         <input type="hidden" name="reqType" id="reqType" value="adminComplaints">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -190,10 +233,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                             <th scope="col">Description of issue</th>
                             <th scope="col">Complaint Date</th>
                             <th scope="col">Resolution Date</th>
+                            <th scope="col">Resolved By</th>
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">';
-        $sql = "SELECT * FROM complaints WHERE " . $category_query . " AND " . $city_query . " AND " . $resolution_query . " ORDER BY id DESC";
+        $sql = "SELECT * FROM complaints WHERE " . $category_query . " AND " . $city_query . " AND " . $resolution_query . " AND " . $admin_query . " ORDER BY id DESC";
         $result = mysqli_query($conn, $sql);
         $num = mysqli_num_rows($result);
         if ($num > 0) {
@@ -226,6 +270,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                     $username = $row1['username'];
                 }
 
+                // Extracting the admin_name from the resolved_by_admin_id of the complaint.
+                $admin_name = "";
+                if ($row['resolved_by_admin_id']) {
+                    $sql1 = "SELECT * FROM admin WHERE id=" . $row['resolved_by_admin_id'];
+                    $result1 = mysqli_query($conn, $sql1);
+                    if (mysqli_num_rows($result1) > 0) {
+                        $row1 = $result1->fetch_assoc();
+                        $admin_name = $row1['admin_name'];
+                    }
+                }
+
                 // Displayiing the complaint details in the table row.
                 echo '
                         <tr class="table-' . $resol . '">
@@ -236,6 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                             <td>' . $row['description'] . '</td>
                             <td>' . $row['dt'] . '</td>
                             <td>' . $resol_dt . '</td>
+                            <td>' . $admin_name . '</td>
                         </tr>';
             }
 
@@ -327,6 +383,109 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'adminSearchUse
                         </tr>';
             }
 
+        }
+        echo '
+                    </tbody>
+                </table>
+            </div>';
+
+        // Categories page of the Admin Portal
+    } else if ($page == 'category') {
+        // Adding a new Category.
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'addCategory') {
+            $newCategory = $_POST['inputAddCategory'];
+            $sql = "INSERT INTO category (category) VALUES ('$newCategory')";
+            $error = '';
+            $result = null;
+            try {
+                $result = mysqli_query($conn, $sql);
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
+            if (!$result || $error != '') {
+                // Display an alert if the category was not added
+                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Error! Category could not be added. ' . $error . '
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aris-hidden="true">&times;</span>
+                        </button>
+                        </div>';
+            }
+        }
+        echo '
+            <div class="container-fluid py-5 col-sm-4 table-responsive">
+                <form action="../admin/admin.php" method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Add Category" aria-label="Add Category" aria-describedby="button-addon2"
+                        name="inputAddCategory" id="inputAddCategory">
+                        <input type="hidden" name="reqType" id="reqType" value="addCategory">
+                        <button class="btn btn-outline-secondary" type="submit" id="addCategory">Add</button>
+                    </div>
+                </form>
+                <table class="table align-middle">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Categories</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">';
+        $sql1 = "SELECT * FROM category";
+        $result1 = mysqli_query($conn, $sql1);
+        while ($row1 = $result1->fetch_assoc()) {
+            echo '<tr class="table-light"><td>' . $row1['category'] . '</td></tr>';
+        }
+        echo '
+                    </tbody>
+                </table>
+            </div>';
+
+        // Add New Admin page of the Admin Portal
+    } else if ($page == 'admin') {
+        // Adding New Admin Credentials.
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['reqType'] == 'addAdmin') {
+            $newAdminName = $_POST['inputAddAdminName'];
+            $newAdminPassword = $_POST['inputAddAdminPassword'];
+            $sql = "INSERT INTO admin (admin_name,password) VALUES ('$newAdminName','$newAdminPassword')";
+            $error = '';
+            $result = null;
+            try {
+                $result = mysqli_query($conn, $sql);
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
+            if (!$result || $error != '') {
+                // Display an alert if the category was not added
+                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Error! Category could not be added. ' . $error . '
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aris-hidden="true">&times;</span>
+                        </button>
+                        </div>';
+            }
+        }
+        echo '
+            <div class="container-fluid py-5 col-sm-4 table-responsive">
+                <form action="../admin/admin.php" method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Admin Name" aria-label="Add Admin" aria-describedby="button-addon2"
+                        name="inputAddAdminName" id="inputAddAdminName">
+                        <input type="password" class="form-control" placeholder="Password" aria-label="Add Password" aria-describedby="button-addon2"
+                        name="inputAddAdminPassword" id="inputAddAdminPassword">
+                        <input type="hidden" name="reqType" id="reqType" value="addAdmin">
+                        <button class="btn btn-outline-secondary" type="submit" id="addAdmin">Add New Admin</button>
+                    </div>
+                </form>
+                <table class="table align-middle">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Admins</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">';
+        $sql1 = "SELECT * FROM admin";
+        $result1 = mysqli_query($conn, $sql1);
+        while ($row1 = $result1->fetch_assoc()) {
+            echo '<tr class="table-light"><td>' . $row1['admin_name'] . '</td></tr>';
         }
         echo '
                     </tbody>
