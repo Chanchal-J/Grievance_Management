@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 02, 2023 at 09:34 AM
+-- Generation Time: Aug 03, 2023 at 09:00 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -38,7 +38,31 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_name`, `password`, `id`) VALUES
-('admin', 'admin', 1);
+('admin', 'admin', 1),
+('Chanchal', 'chancjangid', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `category`
+--
+
+CREATE TABLE `category` (
+  `category` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `category`
+--
+
+INSERT INTO `category` (`category`) VALUES
+('Electric supply'),
+('Other'),
+('Power line'),
+('Road conditions'),
+('Stray animals'),
+('Street light'),
+('Water supply');
 
 -- --------------------------------------------------------
 
@@ -57,39 +81,40 @@ CREATE TABLE `complaints` (
   `pincode` int(11) NOT NULL,
   `dt` timestamp NOT NULL DEFAULT current_timestamp(),
   `dt_resolve` timestamp NULL DEFAULT NULL,
-  `resolved` tinyint(1) NOT NULL DEFAULT 0
+  `resolved` tinyint(1) NOT NULL DEFAULT 0,
+  `resolved_by_admin_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `complaints`
 --
 
-INSERT INTO `complaints` (`id`, `s_no`, `category`, `description`, `address`, `city`, `state`, `pincode`, `dt`, `dt_resolve`, `resolved`) VALUES
-(2, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 15:18:56', '2023-08-02 07:13:54', 1),
-(3, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 15:23:41', '2023-08-02 07:14:09', 1),
-(4, 14, 'Water supply', 'It is not timely', 'E 83, Lal Bahadur Nagar ( West) SL Marg', 'jaipur', 'rajasthan', 302018, '2023-08-02 06:36:53', '2023-08-02 07:13:41', 1),
-(5, 9, 'Power line', 'Their is no appropriate power supply', 'Ballabhbari, Gumanpura', 'Kota', 'rajasthan', 324007, '2023-08-02 06:41:39', '2023-08-02 07:14:06', 1),
-(6, 11, 'Electric supply', 'The lights are being cut regurlarly enough. Exams of our children are ahead. PLease help !!', 'Old Housing Board, Housing Board', 'Pali', 'rajasthan', 306401, '2023-08-02 06:41:39', NULL, 0),
-(7, 2, 'Stray animals', 'A lot of dead cows are thrown in our street and is increasing the infections.', 'Khuri', 'jaisalmer', 'rajasthan', 345001, '2023-08-02 06:44:45', NULL, 0),
-(8, 19, 'Road conditions', 'All the roads are broken due to heavy rains.', 'Queens Rd, Moti Nagar, Nityanand Nagar, Vaishali Nagar', 'jaipur', 'rajasthan', 302021, '2023-08-02 06:44:45', '2023-08-02 07:14:04', 1),
-(9, 17, 'Power line', 'The road is only half built and the workers have stopped the work already', 'Station Rd, Jail Well Mohalla', 'bikaner', 'rajasthan', 334001, '2023-08-02 07:10:35', '2023-08-02 07:13:51', 1),
-(10, 6, 'Water supply', 'There is no water in our locality for past two days.Please help!!', 'Bapu Market\r\n', 'jaipur', 'rajasthan', 302003, '2023-08-02 06:48:35', NULL, 0),
-(11, 7, 'Other', 'My neighbours are not good', '33, University Rd, Pahada', 'udaipur', 'rajasthan', 313001, '2023-08-02 06:54:41', '2023-08-02 07:13:59', 1),
-(12, 8, 'Stray animals ', 'The amount of stray animals have increased rapidly in our locality and the municipal is not giving any attention', '13 & 14, PRATAP NAGAR SEC. 3,[], NEAR LAXMI MISHTAN BHANDAR, TONK ROAD,', 'jaipur', 'rajasthan', 302022, '2023-08-02 06:54:41', NULL, 0),
-(13, 20, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 07:00:05', NULL, 0),
-(14, 12, 'Power supply', 'There are voltage issues ', 'Chitrakoot Scheme', 'jaipur', 'rajasthan', 302021, '2023-08-02 07:00:05', NULL, 0),
-(15, 4, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 07:05:14', NULL, 0),
-(16, 4, 'Street lights', 'All the street lights are broken', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 07:05:14', '2023-08-02 07:13:49', 1),
-(17, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 15:18:56', '0000-00-00 00:00:00', 0),
-(18, 3, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 15:18:56', '0000-00-00 00:00:00', 0),
-(19, 12, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 07:00:05', '2023-08-02 07:14:51', 1),
-(20, 19, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 07:05:14', NULL, 0),
-(21, 18, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '0000-00-00 00:00:00', '2023-08-02 07:13:47', 1),
-(22, 5, 'Other', 'My neighbours are not good', '33, University Rd, Pahada', 'udaipur', 'rajasthan', 313001, '2023-08-02 07:12:41', NULL, 0),
-(23, 11, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 07:18:56', '0000-00-00 00:00:00', 0),
-(24, 13, 'Water supply', 'There is no water in our locality for past two days.Please help!!', 'Bapu Market\r\n', 'jaipur', 'rajasthan', 302003, '2023-08-02 07:18:35', '2023-08-02 07:13:43', 1),
-(25, 1, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 07:19:05', NULL, 0),
-(26, 15, 'Stray animals ', 'The amount of stray animals have increased rapidly in our locality and the municipal is not giving any attention', '13 & 14, PRATAP NAGAR SEC. 3,[], NEAR LAXMI MISHTAN BHANDAR, TONK ROAD,', 'jaipur', 'rajasthan', 302022, '2023-08-02 07:19:41', '2023-08-02 07:13:44', 1);
+INSERT INTO `complaints` (`id`, `s_no`, `category`, `description`, `address`, `city`, `state`, `pincode`, `dt`, `dt_resolve`, `resolved`, `resolved_by_admin_id`) VALUES
+(2, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 09:48:56', '2023-08-02 01:43:54', 1, 1),
+(3, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 09:53:41', '2023-08-02 01:44:09', 1, 1),
+(4, 14, 'Water supply', 'It is not timely', 'E 83, Lal Bahadur Nagar ( West) SL Marg', 'jaipur', 'rajasthan', 302018, '2023-08-02 01:06:53', '2023-08-02 01:43:41', 1, 1),
+(5, 9, 'Power line', 'Their is no appropriate power supply', 'Ballabhbari, Gumanpura', 'Kota', 'rajasthan', 324007, '2023-08-02 01:11:39', '2023-08-02 01:44:06', 1, 1),
+(6, 11, 'Electric supply', 'The lights are being cut regurlarly enough. Exams of our children are ahead. PLease help !!', 'Old Housing Board, Housing Board', 'Pali', 'rajasthan', 306401, '2023-08-02 01:11:39', NULL, 0, NULL),
+(7, 2, 'Stray animals', 'A lot of dead cows are thrown in our street and is increasing the infections.', 'Khuri', 'jaisalmer', 'rajasthan', 345001, '2023-08-02 01:14:45', NULL, 0, NULL),
+(8, 19, 'Road conditions', 'All the roads are broken due to heavy rains.', 'Queens Rd, Moti Nagar, Nityanand Nagar, Vaishali Nagar', 'jaipur', 'rajasthan', 302021, '2023-08-02 01:14:45', '2023-08-02 01:44:04', 1, 1),
+(9, 17, 'Power line', 'The road is only half built and the workers have stopped the work already', 'Station Rd, Jail Well Mohalla', 'bikaner', 'rajasthan', 334001, '2023-08-02 01:40:35', '2023-08-02 01:43:51', 1, 1),
+(10, 6, 'Water supply', 'There is no water in our locality for past two days.Please help!!', 'Bapu Market\r\n', 'jaipur', 'rajasthan', 302003, '2023-08-02 01:18:35', NULL, 0, NULL),
+(11, 7, 'Other', 'My neighbours are not good', '33, University Rd, Pahada', 'udaipur', 'rajasthan', 313001, '2023-08-02 01:24:41', '2023-08-02 01:43:59', 1, 1),
+(12, 8, 'Stray animals ', 'The amount of stray animals have increased rapidly in our locality and the municipal is not giving any attention', '13 & 14, PRATAP NAGAR SEC. 3,[], NEAR LAXMI MISHTAN BHANDAR, TONK ROAD,', 'jaipur', 'rajasthan', 302022, '2023-08-02 01:24:41', '2023-08-03 06:40:31', 1, 2),
+(13, 20, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 01:30:05', NULL, 0, NULL),
+(14, 12, 'Power line', 'There are voltage issues ', 'Chitrakoot Scheme', 'jaipur', 'rajasthan', 302021, '2023-08-02 01:30:05', '2023-08-03 06:40:29', 1, 2),
+(15, 4, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 01:35:14', '2023-08-03 06:22:29', 1, 1),
+(16, 4, 'Street light', 'All the street lights are broken', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 01:35:14', '2023-08-02 01:43:49', 1, 1),
+(17, 13, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 09:48:56', '0000-00-00 00:00:00', 0, NULL),
+(18, 3, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 09:48:56', '0000-00-00 00:00:00', 0, NULL),
+(19, 12, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 01:30:05', '2023-08-02 01:44:51', 1, 1),
+(20, 19, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '2023-08-02 01:35:14', NULL, 0, NULL),
+(21, 18, 'Road conditions', 'the roads are not being made even after complaining in the municipal', 'St Mary\'s School Rd', 'Mt. abu', 'rajasthan', 307501, '0000-00-00 00:00:00', '2023-08-02 01:43:47', 1, 1),
+(22, 5, 'Other', 'My neighbours are not good', '33, University Rd, Pahada', 'udaipur', 'rajasthan', 313001, '2023-08-02 01:42:41', '2023-08-03 06:22:36', 1, 1),
+(23, 11, 'Street light', 'lights dont work at all', 'behind union bank', 'barmer', 'Rajasthan', 344001, '2023-08-01 01:48:56', '2023-08-03 06:40:26', 1, 2),
+(24, 13, 'Water supply', 'There is no water in our locality for past two days.Please help!!', 'Bapu Market\r\n', 'jaipur', 'rajasthan', 302003, '2023-08-02 01:48:35', '2023-08-02 01:43:43', 1, 1),
+(25, 1, 'Electric supply', 'The wires are all jumbled and it is not safe ', 'Rishi Shiv Raj Market,Opp.Janta Sweet Home, Rly Station Road', 'jodhpur', 'rajasthan', 342001, '2023-08-02 01:49:05', NULL, 0, NULL),
+(26, 15, 'Stray animals ', 'The amount of stray animals have increased rapidly in our locality and the municipal is not giving any attention', '13 & 14, PRATAP NAGAR SEC. 3,[], NEAR LAXMI MISHTAN BHANDAR, TONK ROAD,', 'jaipur', 'rajasthan', 302022, '2023-08-02 01:49:41', '2023-08-02 01:43:44', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -144,11 +169,19 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`category`);
+
+--
 -- Indexes for table `complaints`
 --
 ALTER TABLE `complaints`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `s_no` (`s_no`);
+  ADD KEY `s_no` (`s_no`),
+  ADD KEY `category` (`category`),
+  ADD KEY `resolved_by_admin_id` (`resolved_by_admin_id`);
 
 --
 -- Indexes for table `signup`
@@ -166,7 +199,7 @@ ALTER TABLE `signup`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `complaints`
@@ -188,7 +221,9 @@ ALTER TABLE `signup`
 -- Constraints for table `complaints`
 --
 ALTER TABLE `complaints`
-  ADD CONSTRAINT `complaints_ibfk_1` FOREIGN KEY (`s_no`) REFERENCES `signup` (`s_no`);
+  ADD CONSTRAINT `complaints_ibfk_1` FOREIGN KEY (`s_no`) REFERENCES `signup` (`s_no`),
+  ADD CONSTRAINT `complaints_ibfk_2` FOREIGN KEY (`category`) REFERENCES `category` (`category`),
+  ADD CONSTRAINT `complaints_ibfk_3` FOREIGN KEY (`resolved_by_admin_id`) REFERENCES `admin` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
